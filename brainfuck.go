@@ -1,0 +1,100 @@
+/*
+Brainfuck Interpreter
+*/
+package main
+
+import (
+    "fmt"
+    "io/ioutil"
+    "os"
+)
+
+const TAPE_LENGTH = 20
+
+func check_syntax(data []byte) {
+    if len(data) == 0 {
+        panic("Syntax check failed")
+    }
+    return
+}
+
+func cleanup(data []byte) []byte {
+    return data
+}
+
+func buildBracemap(data []byte) map[int]int {
+    stack := make([]int, 0)
+    bracemap := make(map[int]int)
+    for pos, c := range data {
+        switch string(c) {
+        case "[":
+            stack = append(stack, pos)
+        case "]":
+            start := stack[len(stack)-1]
+            bracemap[start] = pos
+            bracemap[pos] = start
+            stack = stack[:len(stack)-1]
+        }
+    }
+    return bracemap
+}
+
+func run_brainfuck_source(data []byte) (err error) {
+    code := cleanup(data)
+    code_ptr := 0
+
+    check_syntax(data)
+    bracemap := buildBracemap(data)
+
+    var tape [TAPE_LENGTH]byte
+    tape_ptr := 0
+
+    for code_ptr < len(code) {
+        switch string(code[code_ptr]) {
+        case ">":
+            tape_ptr++
+        case "<":
+            tape_ptr--
+        case "+":
+            tape[tape_ptr]++
+        case "-":
+            tape[tape_ptr]--
+        case ".":
+            fmt.Print(string(tape[tape_ptr]))
+        case ",":
+            fmt.Println("Read")
+        case "[":
+            if tape[tape_ptr] == 0 {
+                code_ptr = bracemap[code_ptr]
+            }
+        case "]":
+            if tape[tape_ptr] != 0 {
+                code_ptr = bracemap[code_ptr]
+            }
+        }
+        code_ptr++
+    }
+
+    // print newline for graceful exit
+    fmt.Println("")
+    return
+}
+
+func main() {
+    if len(os.Args) == 2 {
+        // read input file
+        data, err := ioutil.ReadFile(os.Args[1])
+        if err != nil {
+            panic(err)
+        }
+
+        // run brainfuck code
+        err = run_brainfuck_source(data)
+        if err != nil {
+            panic(err)
+        }
+    } else {
+        fmt.Println("Usage:", os.Args[0], "filename")
+        return
+    }
+}
