@@ -1,5 +1,11 @@
 /*
 Brainfuck Interpreter
+
+Features:
+    - Written in golang
+    - Basix syntax checking
+    - Tape grows in either direction
+    - Unlimited tape size
 */
 package main
 
@@ -9,8 +15,6 @@ import (
     "os"
 )
 
-const TAPE_LENGTH = 20
-
 func check_syntax(data []byte) {
     if len(data) == 0 {
         panic("Syntax check failed")
@@ -19,6 +23,7 @@ func check_syntax(data []byte) {
 }
 
 func cleanup(data []byte) []byte {
+    // Todo: Implement me
     return data
 }
 
@@ -46,15 +51,25 @@ func run_brainfuck_source(data []byte) (err error) {
     check_syntax(data)
     bracemap := buildBracemap(data)
 
-    var tape [TAPE_LENGTH]byte
+    tape := make([]byte, 1, 1000)
     tape_ptr := 0
 
+    instructions := 0
     for code_ptr < len(code) {
         switch string(code[code_ptr]) {
         case ">":
             tape_ptr++
+            if tape_ptr == len(tape) {
+                tape = append(tape, 0)
+            }
         case "<":
             tape_ptr--
+            if tape_ptr == -1 {
+                tape = append(tape, 0)
+                copy(tape[1:], tape)
+                tape[0] = 0
+                tape_ptr = 0
+            }
         case "+":
             tape[tape_ptr]++
         case "-":
@@ -73,10 +88,12 @@ func run_brainfuck_source(data []byte) (err error) {
             }
         }
         code_ptr++
+        instructions++
     }
 
-    // print newline for graceful exit
     fmt.Println("")
+    fmt.Println("Required tape length:", len(tape))
+    fmt.Println("Instruction count:", instructions)
     return
 }
 
