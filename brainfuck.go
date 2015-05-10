@@ -111,7 +111,7 @@ func main() {
             panic(err)
         }
     } else {
-        fmt.Println("Usage:", os.Args[0], "filename")
+        fmt.Println("Usage:", os.Args[0], "[filename]")
         return
     }
 }
