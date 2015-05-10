@@ -1,11 +1,5 @@
 /*
 Brainfuck Interpreter
-
-Features:
-    - Written in golang
-    - Basix syntax checking
-    - Tape grows in either direction
-    - Unlimited tape size
 */
 package main
 
@@ -28,7 +22,7 @@ func cleanup(data []byte) []byte {
 }
 
 func buildBracemap(data []byte) map[int]int {
-    stack := make([]int, 0)
+    stack := make([]int, 0, 100)
     bracemap := make(map[int]int)
     for pos, c := range data {
         switch string(c) {
@@ -46,14 +40,12 @@ func buildBracemap(data []byte) map[int]int {
 
 func run_brainfuck_source(data []byte) (err error) {
     code := cleanup(data)
-    code_ptr := 0
-
     check_syntax(data)
     bracemap := buildBracemap(data)
-
     tape := make([]byte, 1, 1000)
-    tape_ptr := 0
 
+    code_ptr := 0
+    tape_ptr := 0
     instructions := 0
     for code_ptr < len(code) {
         switch string(code[code_ptr]) {
@@ -111,7 +103,7 @@ func main() {
             panic(err)
         }
     } else {
-        fmt.Println("Usage:", os.Args[0], "[filename]")
+        fmt.Println("Usage:", os.Args[0], "filename")
         return
     }
 }
