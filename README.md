@@ -3,9 +3,10 @@ A brainfuck interpreter written in Go.
 
 ## Features:
  - Written in golang
- - Basix syntax checking
+ - Basic syntax checking (checks for matching braces)
  - Unlimited tape size
- - Tape grows in either direction
+ - Tape can grow in either direction
+ -
 
 ## Usage:
 
