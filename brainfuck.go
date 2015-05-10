@@ -77,7 +77,10 @@ func runBrainfuck(data []byte) (tapeLength, instructionCount int, err error) {
         case '.':
             fmt.Print(string(tape[tapePtr]))
         case ',':
-            fmt.Scanf("%c")
+            // todo: Test this
+            b := make([]uint8, 1)
+            _, _ = os.Stdin.Read(b)
+            tape[tapePtr] = b[0]
         case '[':
             if tape[tapePtr] == 0 {
                 codePtr = bracemap[codePtr]
