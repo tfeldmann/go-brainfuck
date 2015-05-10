@@ -6,7 +6,6 @@ A brainfuck interpreter written in Go.
  - Basic syntax checking (checks for matching braces)
  - Unlimited tape size
  - Tape can grow in either direction
- -
 
 ## Usage:
 
