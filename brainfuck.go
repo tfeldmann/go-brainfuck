@@ -1,9 +1,10 @@
 /*
-Brainfuck Interpreter
-*/
+ * Brainfuck Interpreter
+ */
 package main
 
 import (
+    "bufio"
     "errors"
     "fmt"
     "io/ioutil"
@@ -53,6 +54,7 @@ func runBrainfuck(data []byte) (tapeLength, instructionCount int, err error) {
         return 0, 0, err
     }
 
+    reader := bufio.NewReader(os.Stdin)
     tape := make([]byte, 1, 1000)
     codePtr, tapePtr, instructionCount := 0, 0, 0
     for codePtr < len(code) {
@@ -77,10 +79,8 @@ func runBrainfuck(data []byte) (tapeLength, instructionCount int, err error) {
         case '.':
             fmt.Print(string(tape[tapePtr]))
         case ',':
-            // todo: Test this
-            b := make([]uint8, 1)
-            _, _ = os.Stdin.Read(b)
-            tape[tapePtr] = b[0]
+            readVal, _ := reader.ReadByte()
+            tape[tapePtr] = readVal
         case '[':
             if tape[tapePtr] == 0 {
                 codePtr = bracemap[codePtr]
